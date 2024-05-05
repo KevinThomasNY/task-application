@@ -36,9 +36,9 @@ const generateToken = (id: number): string => {
   });
 };
 
-//desc login user and get token
-//route POST /api/users/login
-//access Public
+//@desc login user and get token
+//@route POST /api/users/login
+//@access Public
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -63,3 +63,15 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   });
   res.status(200).json({ message: "Login successful", token });
 });
+
+//@desc logout user and remove token
+//@route GET /api/users/logout
+//@access Public
+export const logoutUser = (req: Request, res: Response) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    sameSite: 'strict',
+    expires: new Date(0),
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
+};
