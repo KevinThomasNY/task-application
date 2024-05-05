@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 import pool from './db/connect';
 const app = express();
@@ -8,6 +9,8 @@ import errorHandler from './middleware/errorMiddleware';
 import userRoutes from './routes/userRoutes';
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use('/api/users', userRoutes);
 

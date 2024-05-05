@@ -1,15 +1,13 @@
 import pool from "../db/connect";
 import bcrypt from 'bcryptjs';
 import { RowDataPacket } from "mysql2";
-import { UserCreationResponse } from "../types/userTypes";
+import { UserCreationResponse, fetchUserResponse, } from "../types/userTypes";
 
 export const checkUserExists = async (email: string): Promise<boolean> => {
   const query = "SELECT * FROM users WHERE email = ?";
   const [rows] = await pool.execute<RowDataPacket[]>(query, [email]);
   return rows.length > 0;
 };
-
-
 
 export const createUser = async (
   email: string,
@@ -27,3 +25,10 @@ export const createUser = async (
   console.log(result[0]);
   return result[0];
 };
+
+export const fetchUser = async (email: string): Promise<fetchUserResponse> => {
+  const query = "SELECT * from users WHERE email = ?";
+  const [rows] = await pool.execute<fetchUserResponse[]>(query, [email]);
+  console.log(rows[0])
+  return rows[0];
+}
