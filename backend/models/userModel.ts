@@ -11,15 +11,16 @@ export const checkUserExists = async (email: string): Promise<boolean> => {
 
 export const createUser = async (
   email: string,
-  password: string
+  password: string,
+  role: string
 ): Promise<UserCreationResponse> => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  const query = "INSERT INTO users (email, password) VALUES (?, ?)";
-  await pool.execute(query, [email, hashedPassword]);
+  const query = "INSERT INTO users (email, password, role) VALUES (?, ?, ?)";
+  await pool.execute(query, [email, hashedPassword, role]);
 
   const selectQuery =
-    "SELECT user_id, email FROM users WHERE user_id = LAST_INSERT_ID()";
+    "SELECT user_id, email, role FROM users WHERE user_id = LAST_INSERT_ID()";
   const [rows] = await pool.query(selectQuery);
   const result = rows as UserCreationResponse[];
   console.log(result[0]);

@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 
-interface AuthenticatedRequest extends Request {
-  user?: string | JwtPayload;
+export interface AuthenticatedRequest extends Request {
+  user?: { id: number; role: string };
 }
 
 const protect = asyncHandler(
@@ -16,19 +16,16 @@ const protect = asyncHandler(
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as
-        | string
-        | JwtPayload;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
-      req.user = decoded;
-
-      next();
-    } catch (error) {
-      if (error instanceof jwt.TokenExpiredError) {
-        res.status(401).json({ message: "Token expired" });
+      if (typeof decoded === "object" && decoded.id && decoded.role) {
+        req.user = { id: decoded.id, role: decoded.role };
+        next();
       } else {
-        res.status(401).json({ message: "Invalid token" });
+        throw new Error("Invalid token structure");
       }
+    } catch (error) {
+      res.status(401).json({ message: "Invalid token", error });
     }
   }
 );

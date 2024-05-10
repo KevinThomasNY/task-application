@@ -16,7 +16,9 @@ export const registerUser = asyncHandler(
       throw new Error("User already exists");
     }
 
-    const user = await createUser(email, password);
+    const role = 'user';
+
+    const user = await createUser(email, password, role);
 
     if (user) {
       res.status(201).json({
@@ -30,9 +32,9 @@ export const registerUser = asyncHandler(
   }
 );
 
-const generateToken = (id: number): string => {
-  return jwt.sign({ id }, process.env.JWT_SECRET!, {
-    expiresIn: "1d"
+const generateToken = (id: number, role: string): string => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET!, {
+    expiresIn: "1d",
   });
 };
 
@@ -53,7 +55,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Invalid password");
   }
 
-  const token = generateToken(user.user_id);
+  const token = generateToken(user.user_id, user.role);
 
   res.cookie("jwt", token, {
     httpOnly: true,
@@ -68,10 +70,10 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
 //@route GET /api/users/logout
 //@access Public
 export const logoutUser = (req: Request, res: Response) => {
-  res.cookie('jwt', '', {
+  res.cookie("jwt", "", {
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: "strict",
     expires: new Date(0),
   });
-  res.status(200).json({ message: 'Logged out successfully' });
+  res.status(200).json({ message: "Logged out successfully" });
 };
