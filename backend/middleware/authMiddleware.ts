@@ -6,7 +6,7 @@ export interface AuthenticatedRequest extends Request {
   user?: { id: number; role: string };
 }
 
-const protect = asyncHandler(
+export const protect = asyncHandler(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const token = req.cookies.jwt;
 
@@ -30,4 +30,14 @@ const protect = asyncHandler(
   }
 );
 
-export default protect;
+export const isAdmin = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if (req.user && req.user.role === 'admin') {
+      next();
+    } else {
+      res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+  }
+);
+
+
