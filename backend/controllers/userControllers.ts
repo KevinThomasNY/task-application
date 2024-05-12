@@ -89,8 +89,9 @@ export const logoutUser = (req: Request, res: Response) => {
 //@access Private
 export const getUserProfile = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
-    if (req.user?.id) {
-      const user = await fetchUserById(req.user.id);
+    const id = parseInt(req.params.id, 10)
+    if (!isNaN(id)) {
+      const user = await fetchUserById(id);
       res.status(200).json(user);
     } else {
       throw new Error("User id not found");
