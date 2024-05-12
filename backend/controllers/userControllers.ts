@@ -2,7 +2,13 @@ import { Request, Response } from "express";
 import bcript from "bcryptjs";
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import { checkUserExists, createUser, fetchUser } from "../models/userModel";
+import {
+  checkUserExists,
+  createUser,
+  fetchUserByEmail,
+  fetchUserById,
+} from "../models/userModel";
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
 //@desc register a new user
 //@route POST /api/users
@@ -16,7 +22,7 @@ export const registerUser = asyncHandler(
       throw new Error("User already exists");
     }
 
-    const role = 'user';
+    const role = "user";
 
     const user = await createUser(email, password, role);
 
@@ -44,7 +50,7 @@ const generateToken = (id: number, role: string): string => {
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const user = await fetchUser(email);
+  const user = await fetchUserByEmail(email);
 
   if (!user) {
     throw new Error("Email not found");
@@ -77,3 +83,17 @@ export const logoutUser = (req: Request, res: Response) => {
   });
   res.status(200).json({ message: "Logged out successfully" });
 };
+
+//@desc get user profile
+//@route GET /api/users/profile
+//@access Private
+export const getUserProfile = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response) => {
+    if (req.user?.id) {
+      const user = await fetchUserById(req.user.id);
+      res.status(200).json(user);
+    } else {
+      throw new Error("User id not found");
+    }
+  }
+);
