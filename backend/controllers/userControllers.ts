@@ -7,6 +7,7 @@ import {
   createUser,
   fetchUserByEmail,
   fetchUserById,
+  updateEmail,
 } from "../models/userModel";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
@@ -85,14 +86,39 @@ export const logoutUser = (req: Request, res: Response) => {
 };
 
 //@desc get user profile
-//@route GET /api/users/profile
+//@route GET /api/users/profile/user_id
 //@access Private
 export const getUserProfile = asyncHandler(
-  async (req: AuthenticatedRequest, res: Response) => {
-    const id = parseInt(req.params.id, 10)
+  async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id, 10);
     if (!isNaN(id)) {
       const user = await fetchUserById(id);
       res.status(200).json(user);
+    } else {
+      throw new Error("User id not found");
+    }
+  }
+);
+
+//@desc update user email
+//@route PATCH /api/users/update-email/user_id
+//@access Private
+export const updateUserEmail = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    const id = parseInt(req.params.id, 10);
+    if (!isNaN(id)) {
+      const user = await fetchUserById(id);
+      if (user) {
+        const isMatch = await bcript.compare(password, user.password);
+        if (!isMatch) {
+          throw new Error("Invalid password");
+        }
+        const updatedUser = await updateEmail(id, email);
+        res.status(200).json(updatedUser);
+      } else {
+        throw new Error("User not found");
+      }
     } else {
       throw new Error("User id not found");
     }

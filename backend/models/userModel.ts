@@ -1,6 +1,6 @@
 import pool from "../db/connect";
 import bcrypt from "bcryptjs";
-import { RowDataPacket } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 import {
   UserCreationResponse,
   fetchUserByEmailResponse,
@@ -43,8 +43,14 @@ export const fetchUserByEmail = async (
 export const fetchUserById = async (
   id: number
 ): Promise<fetchUserByIdResponse> => {
-  const query = "SELECT user_id, email, role FROM users WHERE user_id = ?";
+  const query = "SELECT * FROM users WHERE user_id = ?";
   const [rows] = await pool.execute<fetchUserByIdResponse[]>(query, [id]);
   console.log(rows[0]);
   return rows[0];
+};
+
+export const updateEmail = async (id: number, email: string): Promise<void> => {
+  const query = "UPDATE users SET email = ? WHERE user_id = ?";
+  const [result] = await pool.execute<ResultSetHeader>(query, [email, id]);
+  console.log(result);
 };
