@@ -6,7 +6,7 @@
 
 - React
 - Redux
-- MUI (Material-UI)
+- Shadcn
 
 ### Backend
 
