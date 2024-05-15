@@ -8,6 +8,7 @@ import {
   fetchUserByEmail,
   fetchUserById,
   updateEmail,
+  updatePassword,
 } from "../models/userModel";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
@@ -116,6 +117,35 @@ export const updateUserEmail = asyncHandler(
         }
         const updatedUser = await updateEmail(id, email);
         res.status(200).json(updatedUser);
+      } else {
+        throw new Error("User not found");
+      }
+    } else {
+      throw new Error("User id not found");
+    }
+  }
+);
+
+//@desc update user password
+//@route PATCH /api/users/update-password/user_id
+//@access Private
+export const updateUserPassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { password, newPassword, confirmPassword } = req.body;
+    const id = parseInt(req.params.id, 10);
+    if (!isNaN(id)) {
+      const user = await fetchUserById(id);
+      if (user) {
+        const isMatch = await bcript.compare(password, user.password);
+        if (!isMatch) {
+          throw new Error("Invalid password");
+        }
+        if (newPassword === confirmPassword) {
+          await updatePassword(id, newPassword);
+          res.status(200).json({ message: "Password updated successfully" });
+        } else {
+          throw new Error("Passwords do not match");
+        }
       } else {
         throw new Error("User not found");
       }

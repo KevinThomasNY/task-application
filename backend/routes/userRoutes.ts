@@ -5,6 +5,7 @@ import {
   logoutUser,
   registerUser,
   updateUserEmail,
+  updateUserPassword,
 } from "../controllers/userControllers";
 import { protect } from "../middleware/authMiddleware";
 
@@ -15,4 +16,6 @@ router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.get("/profile/:id", protect, getUserProfile);
 router.patch("/update-email/:id", protect, updateUserEmail);
+router.patch("/update-password/:id", protect, updateUserPassword);
+
 export default router;

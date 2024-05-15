@@ -54,3 +54,11 @@ export const updateEmail = async (id: number, email: string): Promise<void> => {
   const [result] = await pool.execute<ResultSetHeader>(query, [email, id]);
   console.log(result);
 };
+
+export const updatePassword = async (id: number, newPassword: string):Promise<void> => {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+  const query = "UPDATE users SET password = ? WHERE user_id = ?";
+  const [result] = await pool.execute<ResultSetHeader>(query, [hashedPassword, id]);
+  console.log(result);
+};
