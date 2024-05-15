@@ -115,8 +115,8 @@ export const updateUserEmail = asyncHandler(
         if (!isMatch) {
           throw new Error("Invalid password");
         }
-        const updatedUser = await updateEmail(id, email);
-        res.status(200).json(updatedUser);
+        await updateEmail(id, email);
+        res.status(200).json({ message: "Email updated successfully" });
       } else {
         throw new Error("User not found");
       }
