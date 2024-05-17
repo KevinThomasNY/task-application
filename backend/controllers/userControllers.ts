@@ -5,12 +5,12 @@ import asyncHandler from "express-async-handler";
 import {
   checkUserExists,
   createUser,
+  deleteUserById,
   fetchUserByEmail,
   fetchUserById,
   updateEmail,
   updatePassword,
 } from "../models/userModel";
-import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
 //@desc register a new user
 //@route POST /api/users
@@ -151,6 +151,25 @@ export const updateUserPassword = asyncHandler(
       }
     } else {
       throw new Error("User id not found");
+    }
+  }
+);
+
+//@desk delete user profile
+//@route DELETE /api/users/delete-own-profile/user_id
+//@route DELETE /api/users/delete-user-profile/user_id
+//@access Private
+export const deleteUserProfile = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id, 10);
+    if (!isNaN(id)) {
+      const user = await fetchUserById(id);
+      if (user) {
+        await deleteUserById(id);
+        res.status(200).json({ message: "User deleted successfully" });
+      } else {
+        throw new Error("User not found");
+      }
     }
   }
 );

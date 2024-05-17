@@ -55,10 +55,22 @@ export const updateEmail = async (id: number, email: string): Promise<void> => {
   console.log(result);
 };
 
-export const updatePassword = async (id: number, newPassword: string):Promise<void> => {
+export const updatePassword = async (
+  id: number,
+  newPassword: string
+): Promise<void> => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(newPassword, salt);
   const query = "UPDATE users SET password = ? WHERE user_id = ?";
-  const [result] = await pool.execute<ResultSetHeader>(query, [hashedPassword, id]);
+  const [result] = await pool.execute<ResultSetHeader>(query, [
+    hashedPassword,
+    id,
+  ]);
+  console.log(result);
+};
+
+export const deleteUserById = async (id: number): Promise<void> => {
+  const query = "DELETE FROM users where user_id = ?";
+  const result = await pool.execute<ResultSetHeader>(query, [id]);
   console.log(result);
 };
