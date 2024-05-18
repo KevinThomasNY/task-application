@@ -6,15 +6,20 @@ export interface UserCreationResponse extends RowDataPacket {
   role: string;
 }
 
-export interface fetchUserByEmailResponse extends RowDataPacket {
+export interface FetchUserByEmailResponse extends RowDataPacket {
   user_id: number;
   email: string;
   password: string;
   role: string;
 }
-export interface fetchUserByIdResponse extends RowDataPacket {
+
+export interface FetchUserByIdResponse extends RowDataPacket {
   user_id: number;
   email: string;
   password: string;
   role: string;
+}
+
+export interface FetchAllUsersResponse {
+  users: UserCreationResponse[];
 }

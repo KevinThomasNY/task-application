@@ -6,6 +6,7 @@ import {
   checkUserExists,
   createUser,
   deleteUserById,
+  fetchAllUsers,
   fetchUserByEmail,
   fetchUserById,
   updateEmail,
@@ -102,7 +103,7 @@ export const getUserProfile = asyncHandler(
 );
 
 //@desc update user email
-//@route PATCH /api/users/update-email/user_id
+//@route PATCH /api/users/update-email/:id
 //@access Private
 export const updateUserEmail = asyncHandler(
   async (req: Request, res: Response) => {
@@ -127,7 +128,7 @@ export const updateUserEmail = asyncHandler(
 );
 
 //@desc update user password
-//@route PATCH /api/users/update-password/user_id
+//@route PATCH /api/users/update-password/:id
 //@access Private
 export const updateUserPassword = asyncHandler(
   async (req: Request, res: Response) => {
@@ -155,9 +156,9 @@ export const updateUserPassword = asyncHandler(
   }
 );
 
-//@desk delete user profile
-//@route DELETE /api/users/delete-own-profile/user_id
-//@route DELETE /api/users/delete-user-profile/user_id
+//@desc delete user profile
+//@route DELETE /api/users/delete-own-profile/:id
+//@route DELETE /api/users/delete-user-profile/:id
 //@access Private
 export const deleteUserProfile = asyncHandler(
   async (req: Request, res: Response) => {
@@ -171,5 +172,15 @@ export const deleteUserProfile = asyncHandler(
         throw new Error("User not found");
       }
     }
+  }
+);
+
+//@desc get all user profiles
+//@route GET /api/users/all-user-profiles/
+//@access Private
+export const getAllUserProfiles = asyncHandler(
+  async (req: Request, res: Response) => {
+    const users = await fetchAllUsers();
+    res.status(200).json(users);
   }
 );

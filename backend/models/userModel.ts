@@ -3,8 +3,9 @@ import bcrypt from "bcryptjs";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import {
   UserCreationResponse,
-  fetchUserByEmailResponse,
-  fetchUserByIdResponse,
+  FetchUserByEmailResponse,
+  FetchUserByIdResponse,
+  FetchAllUsersResponse,
 } from "../types/userTypes";
 
 export const checkUserExists = async (email: string): Promise<boolean> => {
@@ -33,18 +34,18 @@ export const createUser = async (
 
 export const fetchUserByEmail = async (
   email: string
-): Promise<fetchUserByEmailResponse> => {
+): Promise<FetchUserByEmailResponse> => {
   const query = "SELECT * from users WHERE email = ?";
-  const [rows] = await pool.execute<fetchUserByEmailResponse[]>(query, [email]);
+  const [rows] = await pool.execute<FetchUserByEmailResponse[]>(query, [email]);
   console.log(rows[0]);
   return rows[0];
 };
 
 export const fetchUserById = async (
   id: number
-): Promise<fetchUserByIdResponse> => {
+): Promise<FetchUserByIdResponse> => {
   const query = "SELECT * FROM users WHERE user_id = ?";
-  const [rows] = await pool.execute<fetchUserByIdResponse[]>(query, [id]);
+  const [rows] = await pool.execute<FetchUserByIdResponse[]>(query, [id]);
   console.log(rows[0]);
   return rows[0];
 };
@@ -73,4 +74,11 @@ export const deleteUserById = async (id: number): Promise<void> => {
   const query = "DELETE FROM users where user_id = ?";
   const result = await pool.execute<ResultSetHeader>(query, [id]);
   console.log(result);
+};
+
+export const fetchAllUsers = async (): Promise<FetchAllUsersResponse> => {
+  const query = "SELECT user_id, email, role FROM users WHERE role = 'user'";
+  const [rows] = await pool.execute<UserCreationResponse[]>(query);
+  console.log(rows);
+  return { users: rows };
 };
